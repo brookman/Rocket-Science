@@ -41,7 +41,7 @@ public class Entity {
          meshes[i] = new Mesh(true, poly.getVertexCount(), 0, new VertexAttribute(Usage.Position, 3, "a_position"), new VertexAttribute(Usage.ColorPacked, 4, "a_color"));
       }
 
-      colorCounter += 3;
+      colorCounter += body.getFixtureList().size();
    }
 
    public void draw() {
@@ -80,7 +80,7 @@ public class Entity {
             meshesData[i][j] = temp.x;
             meshesData[i][j + 1] = temp.y;
             meshesData[i][j + 2] = 0;
-            meshesData[i][j + 3] = colors[color + i % colors.length];
+            meshesData[i][j + 3] = colors[(color + i) % colors.length];
          }
 
          meshes[i].setVertices(meshesData[i]);

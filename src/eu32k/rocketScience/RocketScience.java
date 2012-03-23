@@ -18,8 +18,8 @@ import com.badlogic.gdx.physics.box2d.World;
 public class RocketScience implements ApplicationListener {
 
    private float aspectRatio;
-   private float zoom = 20.0f;
    private float targetZoom = 20.0f;
+   private float zoom = targetZoom;
 
    private SpriteBatch batch;
 

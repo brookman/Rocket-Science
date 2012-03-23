@@ -19,11 +19,10 @@ public class GeometryFactory {
 
    public Body makeRocket(float x, float y) {
       FixtureDef pipe = makeFixture(new Vector2[] { new Vector2(-0.5f, 2.0f), new Vector2(-0.5f, -2.0f), new Vector2(0.5f, -2.0f), new Vector2(0.5f, 2.0f), new Vector2(0.3f, 2.5f),
-            new Vector2(-0.3f, 2.5f) }, 1.0f, 0.4f, 0.1f);
-      FixtureDef head = makeFixture(new Vector2[] { new Vector2(-0.3f, 2.5f), new Vector2(0.3f, 2.5f), new Vector2(0.0f, 2.8f) }, 1.0f, 0.4f, 0.1f);
-      head.isSensor = true;
+            new Vector2(-0.3f, 2.5f) }, 1.0f, 0.4f, 0.1f, false);
+      FixtureDef head = makeFixture(new Vector2[] { new Vector2(-0.3f, 2.5f), new Vector2(0.3f, 2.5f), new Vector2(0.0f, 2.8f) }, 1.0f, 0.4f, 0.1f, true);
 
-      FixtureDef engine = makeFixture(new Vector2[] { new Vector2(-0.25f, -2.3f), new Vector2(0.25f, -2.3f), new Vector2(0.0f, -1.8f) }, 1.0f, 0.4f, 0.1f);
+      FixtureDef engine = makeFixture(new Vector2[] { new Vector2(-0.25f, -2.3f), new Vector2(0.25f, -2.3f), new Vector2(0.0f, -1.8f) }, 1.0f, 0.4f, 0.1f, false);
 
       BodyDef bodyDef = makeBodyDef(BodyType.DynamicBody, false, false);
 
@@ -35,7 +34,7 @@ public class GeometryFactory {
    }
 
    public Body makeGround(float x, float y) {
-      FixtureDef ground = makeFixture(new Vector2[] { new Vector2(-100.0f, 1.0f), new Vector2(-100.0f, -1.0f), new Vector2(100.0f, -1.0f), new Vector2(100.0f, 1.0f) }, 1.0f, 0.4f, 0.1f);
+      FixtureDef ground = makeFixture(new Vector2[] { new Vector2(-100.0f, 1.0f), new Vector2(-100.0f, -1.0f), new Vector2(100.0f, -1.0f), new Vector2(100.0f, 1.0f) }, 1.0f, 0.4f, 0.1f, false);
       // FixtureDef head = makeFixture(vertices, 1.0f, 0.4f, 0.1f);
 
       BodyDef bodyDef = makeBodyDef(BodyType.StaticBody, false, false);
@@ -45,7 +44,7 @@ public class GeometryFactory {
    }
 
    public Body makeRamp(float x, float y) {
-      FixtureDef ground = makeFixture(new Vector2[] { new Vector2(-100.0f, 1.0f), new Vector2(-100.0f, -1.0f), new Vector2(100.0f, -1.0f), new Vector2(100.0f, 1.0f) }, 1.0f, 0.4f, 0.1f);
+      FixtureDef ground = makeFixture(new Vector2[] { new Vector2(-100.0f, 1.0f), new Vector2(-100.0f, -1.0f), new Vector2(100.0f, -1.0f), new Vector2(100.0f, 1.0f) }, 1.0f, 0.4f, 0.1f, false);
       // FixtureDef head = makeFixture(vertices, 1.0f, 0.4f, 0.1f);
 
       BodyDef bodyDef = makeBodyDef(BodyType.StaticBody, false, false);
@@ -78,7 +77,15 @@ public class GeometryFactory {
       return bd;
    }
 
-   public FixtureDef makeFixture(Vector2[] vertices, float density, float friction, float restitution) {
+   public FixtureDef makeFixture(Vector2[] vertices, float density, float friction, float restitution, boolean isSensor, short categoryBits, short maskBits, short groupIndex) {
+      FixtureDef fd = makeFixture(vertices, density, friction, restitution, isSensor);
+      fd.filter.categoryBits = categoryBits;
+      fd.filter.maskBits = maskBits;
+      fd.filter.groupIndex = groupIndex;
+      return fd;
+   }
+
+   public FixtureDef makeFixture(Vector2[] vertices, float density, float friction, float restitution, boolean isSensor) {
       FixtureDef fd = new FixtureDef();
       PolygonShape shape = new PolygonShape();
       shape.set(vertices);
@@ -86,6 +93,7 @@ public class GeometryFactory {
       fd.density = density;
       fd.friction = friction;
       fd.restitution = restitution;
+      fd.isSensor = isSensor;
       return fd;
    }
 }
