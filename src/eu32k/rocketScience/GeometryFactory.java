@@ -20,13 +20,14 @@ public class GeometryFactory {
    public Body makeRocket(float x, float y) {
       FixtureDef pipe = makeFixture(new Vector2[] { new Vector2(-0.5f, 2.0f), new Vector2(-0.5f, -2.0f), new Vector2(0.5f, -2.0f), new Vector2(0.5f, 2.0f), new Vector2(0.3f, 2.5f),
             new Vector2(-0.3f, 2.5f) }, 1.0f, 0.4f, 0.1f, false);
+
       FixtureDef head = makeFixture(new Vector2[] { new Vector2(-0.3f, 2.5f), new Vector2(0.3f, 2.5f), new Vector2(0.0f, 2.8f) }, 1.0f, 0.4f, 0.1f, true);
 
       FixtureDef engine = makeFixture(new Vector2[] { new Vector2(-0.25f, -2.3f), new Vector2(0.25f, -2.3f), new Vector2(0.0f, -1.8f) }, 1.0f, 0.4f, 0.1f, false);
 
       BodyDef bodyDef = makeBodyDef(BodyType.DynamicBody, false, false);
 
-      Body body = makeBody(bodyDef, new FixtureDef[] { engine, head, pipe }, 4f, new Vector2(x, y), 0.0f, head);
+      Body body = makeBody(bodyDef, new FixtureDef[] { /* engine, head, */pipe }, 4f, new Vector2(x, y), 0.0f, head);
       body.setLinearDamping(0.2f);
       body.setAngularDamping(0.5f);
 
