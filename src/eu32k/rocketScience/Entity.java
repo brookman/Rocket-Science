@@ -1,12 +1,14 @@
 package eu32k.rocketScience;
 
+import math.geom2d.Point2D;
+import math.geom2d.Vector2D;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -40,7 +42,9 @@ public class Entity {
       texture = Textures.tex("pixel.png");
       texture2 = Textures.tex("pixel2.png");
       this.body = body;
-      // mesh = new Mesh(true, 4, 0, new VertexAttribute(Usage.Position, 3, "a_position"), new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoords"));
+      // mesh = new Mesh(true, 4, 0, new VertexAttribute(Usage.Position, 3,
+      // "a_position"), new VertexAttribute(Usage.TextureCoordinates, 2,
+      // "a_texCoords"));
 
       meshes = new Mesh[body.getFixtureList().size()];
       meshesData = new float[body.getFixtureList().size()][];
@@ -100,6 +104,15 @@ public class Entity {
                poly.getVertex(polyIndex == poly.getVertexCount() - 1 ? 0 : polyIndex + 1, after);
                // transform.mul(after);
 
+               Vector2D vec1 = new Vector2D(new Point2D(after.x, after.y), new Point2D(current.x, current.y));
+               Vector2D vec2 = new Vector2D(new Point2D(before.x, before.y), new Point2D(current.x, current.y));
+
+               vec1.normalize();
+               vec2.normalize();
+               Vector2D sum = vec1.plus(vec2);
+               sum.normalize();
+               sum = sum.times(0.2);
+
                before = before.sub(current);
                after = after.sub(current);
 
@@ -109,9 +122,8 @@ public class Entity {
                   average += 180.0f;
                }
 
-               Vector2 newPoint = new Vector2(MathUtils.cos(average / 180.0f * MathUtils.PI) * len, MathUtils.sin(average / 180.0f * MathUtils.PI) * len);
+               Vector2 newPoint = new Vector2(current.x + (float) sum.getX(), current.y + (float) sum.getY());
 
-               newPoint = current.cpy().add(newPoint);
                transform.mul(newPoint);
 
                transform.mul(current);
