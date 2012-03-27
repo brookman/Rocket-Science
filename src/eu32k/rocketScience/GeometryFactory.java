@@ -27,7 +27,7 @@ public class GeometryFactory {
 
       BodyDef bodyDef = makeBodyDef(BodyType.DynamicBody, false, false);
 
-      Body body = makeBody(bodyDef, new FixtureDef[] { /* engine, head, */pipe }, 4f, new Vector2(x, y), 0.0f, head);
+      Body body = makeBody(bodyDef, new FixtureDef[] { engine, head, pipe }, 4f, new Vector2(x, y), 0.0f, head);
       body.setLinearDamping(0.2f);
       body.setAngularDamping(0.5f);
 

@@ -4,9 +4,10 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -19,41 +20,55 @@ public class RocketScience implements ApplicationListener {
    private float targetZoom = 20.0f;
    private float zoom = targetZoom;
 
-   private SpriteBatch batch;
-
    private Entity rocket;
    private Entity ground;
 
    private World world;
    private Camera camera;
 
+   private SpriteBatch batch;
+   private Menu menu;
+   private ShaderProgram shader;
+
    @Override
    public void create() {
-      // world = new World(new Vector2(0.0f, -10.0f), true);
-      world = new World(new Vector2(0.0f, -0.0f), true);
-      // BodyBuilder bb = new BodyBuilder(world);
-      // bb = bb.fixture(bb.fixtureDefBuilder().friction(0.4f).density(1.0f).boxShape(1f, 4f).restitution(0.1f));
-      //
-      // bb = bb.position(0f, 0f).mass(4f).type(BodyType.DynamicBody).userData(rocket);
-      // Body rocketBody = bb.build();
-      //
-      // PolygonShape shape = new PolygonShape();
-      // shape.set(ne)
-      //
-      //
-      // rocketBody.setLinearDamping(0.2f);
-      // rocketBody.setAngularDamping(0.2f);
+      world = new World(new Vector2(0.0f, -10.0f), true);
 
       GeometryFactory gf = new GeometryFactory(world);
 
+      String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+            + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
+            + "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + ";\n" //
+            + "uniform mat4 u_projectionViewMatrix;\n" //
+            + "varying vec4 v_color;\n" //
+            + "varying vec2 v_texCoords;\n" //
+            + "\n" //
+            + "void main()\n" //
+            + "{\n" //
+            + "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
+            + "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + ";\n" //
+            + "   gl_Position =  u_projectionViewMatrix * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+            + "}\n";
+      String fragmentShader = "#ifdef GL_ES\n" //
+            + "#define LOWP lowp\n" //
+            + "precision mediump float;\n" //
+            + "#else\n" //
+            + "#define LOWP \n" //
+            + "#endif\n" //
+            + "varying LOWP vec4 v_color;\n" //
+            + "varying vec2 v_texCoords;\n" //
+            + "uniform sampler2D u_texture;\n" //
+            + "void main()\n"//
+            + "{\n" //
+            + "  gl_FragColor = v_color;\n"// * texture2D(u_texture, v_texCoords);\n" //
+            + "}";
+      shader = new ShaderProgram(vertexShader, fragmentShader);
+
+      rocket = new Entity("pixel.png", gf.makeRocket(0.0f, 0.0f), shader);
+      ground = new Entity("pixel.png", gf.makeGround(0.0f, -3.5f), shader);
+
       batch = new SpriteBatch();
-
-      rocket = new Entity("pixel.png", gf.makeRocket(0.0f, 0.0f));
-      ground = new Entity("pixel.png", gf.makeGround(0.0f, -3.5f));
-
-      // Body groundBody = bb.fixture(bb.fixtureDefBuilder().boxShape(40f, 1f).friction(0.4f).restitution(0f)).position(-3f, -4.1f).mass(1f).type(BodyType.StaticBody).build();
-
-      // bb.fixture(bb.fixtureDefBuilder().circleShape(0.5f).restitution(0f)).position(0, -2f).mass(1f).type(BodyType.StaticBody).build();
+      menu = Menu.getInstance();
 
    }
 
@@ -69,22 +84,18 @@ public class RocketScience implements ApplicationListener {
 
    @Override
    public void render() {
-
-      // world.getContactList().get(0).get
-
       world.step(Gdx.graphics.getDeltaTime(), 8, 3);
 
       camera.position.x = rocket.getBody().getPosition().x;
       camera.position.y = rocket.getBody().getPosition().y;
       camera.update();
-      camera.apply(Gdx.gl10);
 
-      // Gdx.gl.glEnable(GL10.GL_TEXTURE_2D);
-      Gdx.gl.glEnable(GL10.GL_BLEND);
-      Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+      Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
+      // Gdx.gl.glEnable(GL20.GL_BLEND);
+      // Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
       Gdx.gl.glClearColor(1f / 255f * 180f, 1f / 255f * 230f, 1f, 1);
-      Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
       Body b = rocket.getBody();
       Transform t = b.getTransform();
@@ -111,15 +122,17 @@ public class RocketScience implements ApplicationListener {
       // }
       // }
 
-      targetZoom = 20.0f + b.getLinearVelocity().len();
+      // targetZoom = 20.0f + b.getLinearVelocity().len();
+      //
+      // zoom += (targetZoom - zoom) * 0.01f;
+      // updateCam();
 
-      zoom += (targetZoom - zoom) * 0.01f;
-      updateCam();
+      rocket.draw(camera.combined);
+      ground.draw(camera.combined);
 
-      rocket.draw();
-      // ground.draw();
-
-      // box2dDebugRenderer.render(world, camera.projection);
+      // batch.begin();
+      // menu.draw(batch, 20, 50, Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() / 4);
+      // batch.end();
    }
 
    @Override

@@ -5,7 +5,7 @@
 	<classpathentry kind="lib" path="lib/gdx-backend-jogl-natives.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-backend-jogl.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-natives.jar"/>
-	<classpathentry kind="lib" path="lib/gdx.jar"/>
+	<classpathentry kind="lib" path="lib/gdx.jar" sourcepath="lib/sources/gdx-sources.jar"/>
 	<classpathentry kind="lib" path="lib/javaGeom-0.10.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
