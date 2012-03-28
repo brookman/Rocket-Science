@@ -1,5 +1,6 @@
 package eu32k.rocketScience;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -9,25 +10,44 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import eu32k.rocketScience.external.FixtureAtlas;
+
 public class GeometryFactory {
 
    private World world;
+   private FixtureAtlas fixtureAtlas;
 
    public GeometryFactory(World world) {
       this.world = world;
+      fixtureAtlas = new FixtureAtlas(Gdx.files.internal("data/models/models.bin"));
+   }
+
+   public Body loadModel(String name, float x, float y, float size, float mass, BodyType type) {
+      BodyDef bodyDef = makeBodyDef(type, false, false);
+
+      Body body = makeBody(bodyDef, new FixtureDef[] {}, 4f, new Vector2(x, y), 0.0f, null);
+      body.setLinearDamping(0.2f);
+      body.setAngularDamping(0.5f);
+
+      FixtureDef fixture = makeFixture(null, 1.0f, 0.4f, 0.1f, false);
+      fixtureAtlas.createFixtures(body, name, size, size, fixture);
+      return body;
    }
 
    public Body makeRocket(float x, float y) {
       FixtureDef pipe = makeFixture(new Vector2[] { new Vector2(-0.5f, 2.0f), new Vector2(-0.5f, -2.0f), new Vector2(0.5f, -2.0f), new Vector2(0.5f, 2.0f), new Vector2(0.3f, 2.5f),
             new Vector2(-0.3f, 2.5f) }, 1.0f, 0.4f, 0.1f, false);
 
-      FixtureDef head = makeFixture(new Vector2[] { new Vector2(-0.3f, 2.5f), new Vector2(0.3f, 2.5f), new Vector2(0.0f, 2.8f) }, 1.0f, 0.4f, 0.1f, true);
+      FixtureDef head = makeFixture(new Vector2[] { new Vector2(-0.3f, 2.5f), new Vector2(0.3f, 2.5f), new Vector2(0.0f, 3.0f) }, 1.0f, 0.4f, 0.1f, true);
 
-      FixtureDef engine = makeFixture(new Vector2[] { new Vector2(-0.25f, -2.3f), new Vector2(0.25f, -2.3f), new Vector2(0.0f, -1.8f) }, 1.0f, 0.4f, 0.1f, false);
+      FixtureDef engine = makeFixture(new Vector2[] { new Vector2(-0.3f, -2.4f), new Vector2(0.3f, -2.4f), new Vector2(0.0f, -1.8f) }, 1.0f, 0.4f, 0.1f, false);
+
+      FixtureDef wing1 = makeFixture(new Vector2[] { new Vector2(-0.5f, -2.0f), new Vector2(-0.5f, -1.0f), new Vector2(-1.3f, -1.8f), new Vector2(-1.3f, -2.5f) }, 1.0f, 0.4f, 0.1f, false);
+      FixtureDef wing2 = makeFixture(new Vector2[] { new Vector2(1.3f, -2.5f), new Vector2(1.3f, -1.8f), new Vector2(0.5f, -1.0f), new Vector2(0.5f, -2.0f) }, 1.0f, 0.4f, 0.1f, false);
 
       BodyDef bodyDef = makeBodyDef(BodyType.DynamicBody, false, false);
 
-      Body body = makeBody(bodyDef, new FixtureDef[] { engine, head, pipe }, 4f, new Vector2(x, y), 0.0f, head);
+      Body body = makeBody(bodyDef, new FixtureDef[] { engine, head, wing1, wing2, pipe }, 4f, new Vector2(x, y), 0.0f, head);
       body.setLinearDamping(0.2f);
       body.setAngularDamping(0.5f);
 
@@ -44,13 +64,31 @@ public class GeometryFactory {
       return body;
    }
 
-   public Body makeRamp(float x, float y) {
-      FixtureDef ground = makeFixture(new Vector2[] { new Vector2(-100.0f, 1.0f), new Vector2(-100.0f, -1.0f), new Vector2(100.0f, -1.0f), new Vector2(100.0f, 1.0f) }, 1.0f, 0.4f, 0.1f, false);
-      // FixtureDef head = makeFixture(vertices, 1.0f, 0.4f, 0.1f);
+   public Body makeRamp1(float x, float y) {
+      FixtureDef base = makeFixture(new Vector2[] { new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f), new Vector2(0.5f, 2f), new Vector2(-0.5f, 2f) }, 1.0f, 0.4f, 0.1f, false);
 
-      BodyDef bodyDef = makeBodyDef(BodyType.StaticBody, false, false);
+      FixtureDef top = makeFixture(new Vector2[] { new Vector2(-0.5f, 2f), new Vector2(0.5f, 2f), new Vector2(1.4f, 2.8f), new Vector2(1.4f, 3.2f) }, 1.0f, 0.4f, 0.1f, false);
 
-      Body body = makeBody(bodyDef, new FixtureDef[] { ground }, 0f, new Vector2(x, y), 0.0f, null);
+      BodyDef bodyDef = makeBodyDef(BodyType.DynamicBody, false, false);
+
+      Body body = makeBody(bodyDef, new FixtureDef[] { top, base }, 0.5f, new Vector2(x, y), 0.0f, null);
+
+      body.setLinearDamping(0.2f);
+      body.setAngularDamping(0.5f);
+      return body;
+   }
+
+   public Body makeRamp2(float x, float y) {
+      FixtureDef base = makeFixture(new Vector2[] { new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f), new Vector2(0.5f, 2f), new Vector2(-0.5f, 2f) }, 1.0f, 0.4f, 0.1f, false);
+
+      FixtureDef top = makeFixture(new Vector2[] { new Vector2(-0.5f, 2f), new Vector2(0.5f, 2f), new Vector2(-1.4f, 3.2f), new Vector2(-1.4f, 2.8f) }, 1.0f, 0.4f, 0.1f, false);
+
+      BodyDef bodyDef = makeBodyDef(BodyType.DynamicBody, false, false);
+
+      Body body = makeBody(bodyDef, new FixtureDef[] { top, base }, 0.5f, new Vector2(x, y), 0.0f, null);
+
+      body.setLinearDamping(0.2f);
+      body.setAngularDamping(0.5f);
       return body;
    }
 
@@ -88,9 +126,11 @@ public class GeometryFactory {
 
    public FixtureDef makeFixture(Vector2[] vertices, float density, float friction, float restitution, boolean isSensor) {
       FixtureDef fd = new FixtureDef();
-      PolygonShape shape = new PolygonShape();
-      shape.set(vertices);
-      fd.shape = shape;
+      if (vertices != null) {
+         PolygonShape shape = new PolygonShape();
+         shape.set(vertices);
+         fd.shape = shape;
+      }
       fd.density = density;
       fd.friction = friction;
       fd.restitution = restitution;

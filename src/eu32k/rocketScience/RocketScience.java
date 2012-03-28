@@ -1,5 +1,8 @@
 package eu32k.rocketScience;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -14,6 +17,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
 
+import eu32k.rocketScience.entity.Entity;
+import eu32k.rocketScience.entity.Movable;
+import eu32k.rocketScience.entity.Rocket;
+
 public class RocketScience implements ApplicationListener {
 
    private float aspectRatio;
@@ -21,7 +28,7 @@ public class RocketScience implements ApplicationListener {
    private float zoom = targetZoom;
 
    private Entity rocket;
-   private Entity ground;
+   private List<Entity> entities;
 
    private World world;
    private Camera camera;
@@ -60,12 +67,19 @@ public class RocketScience implements ApplicationListener {
             + "uniform sampler2D u_texture;\n" //
             + "void main()\n"//
             + "{\n" //
-            + "  gl_FragColor = v_color;\n"// * texture2D(u_texture, v_texCoords);\n" //
+            + "  gl_FragColor = texture2D(u_texture, v_texCoords);\n" //
             + "}";
       shader = new ShaderProgram(vertexShader, fragmentShader);
 
-      rocket = new Entity("pixel.png", gf.makeRocket(0.0f, 0.0f), shader);
-      ground = new Entity("pixel.png", gf.makeGround(0.0f, -3.5f), shader);
+      entities = new ArrayList<Entity>();
+
+      rocket = new Rocket(gf, shader);
+      entities.add(rocket);
+
+      entities.add(new Movable(gf, "base1.png", shader));
+      entities.add(new Movable(gf, "base2.png", shader));
+
+      entities.add(new Entity(gf, "ground.png", shader));
 
       batch = new SpriteBatch();
       menu = Menu.getInstance();
@@ -89,17 +103,18 @@ public class RocketScience implements ApplicationListener {
       camera.position.x = rocket.getBody().getPosition().x;
       camera.position.y = rocket.getBody().getPosition().y;
       camera.update();
+      Gdx.graphics.setVSync(true);
 
       Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
-      // Gdx.gl.glEnable(GL20.GL_BLEND);
-      // Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+      Gdx.gl.glEnable(GL20.GL_BLEND);
+      Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
       Gdx.gl.glClearColor(1f / 255f * 180f, 1f / 255f * 230f, 1f, 1);
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
       Body b = rocket.getBody();
       Transform t = b.getTransform();
-      Vector2 base = new Vector2(0.0f, -2.0f);
+      Vector2 base = new Vector2(0.0f, 0.0f);
       t.mul(base);
       if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
          float strength = 200.0f;
@@ -127,8 +142,9 @@ public class RocketScience implements ApplicationListener {
       // zoom += (targetZoom - zoom) * 0.01f;
       // updateCam();
 
-      rocket.draw(camera.combined);
-      ground.draw(camera.combined);
+      for (Entity entity : entities) {
+         entity.draw(camera.combined);
+      }
 
       // batch.begin();
       // menu.draw(batch, 20, 50, Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() / 4);
