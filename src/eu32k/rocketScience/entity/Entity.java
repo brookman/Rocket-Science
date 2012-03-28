@@ -126,6 +126,10 @@ public class Entity {
    }
 
    public void draw(Matrix4 mat) {
+      if (!body.isActive()) {
+         return;
+      }
+
       Transform transform = body.getTransform();
 
       texture.bind();
@@ -170,11 +174,15 @@ public class Entity {
       // poly.getVertex(polyIndex, current);
       //
       // // if (scale) {
-      // // poly.getVertex(polyIndex == 0 ? poly.getVertexCount() - 1 : polyIndex - 1, before);
-      // // poly.getVertex(polyIndex == poly.getVertexCount() - 1 ? 0 : polyIndex + 1, after);
+      // // poly.getVertex(polyIndex == 0 ? poly.getVertexCount() - 1 :
+      // polyIndex - 1, before);
+      // // poly.getVertex(polyIndex == poly.getVertexCount() - 1 ? 0 :
+      // polyIndex + 1, after);
       // //
-      // // Vector2D vec1 = new Vector2D(new Point2D(after.x, after.y), new Point2D(current.x, current.y));
-      // // Vector2D vec2 = new Vector2D(new Point2D(before.x, before.y), new Point2D(current.x, current.y));
+      // // Vector2D vec1 = new Vector2D(new Point2D(after.x, after.y), new
+      // Point2D(current.x, current.y));
+      // // Vector2D vec2 = new Vector2D(new Point2D(before.x, before.y), new
+      // Point2D(current.x, current.y));
       // //
       // // double a1 = vec1.getAngle();
       // // double a2 = vec2.getAngle();
@@ -190,12 +198,14 @@ public class Entity {
       // // System.out.println("diff " + diff * 180 / Math.PI);
       // // System.out.println("center " + angle * 180 / Math.PI);
       // //
-      // // Vector2D sum = new Vector2D(Math.cos(angle) * 0.2, Math.sin(angle) * 0.2);
+      // // Vector2D sum = new Vector2D(Math.cos(angle) * 0.2, Math.sin(angle) *
+      // 0.2);
       // // sum.normalize();
       // //
       // // sum = sum.times(0.2);
       // //
-      // // Vector2 newPoint = new Vector2(current.x + (float) sum.getX(), current.y + (float) sum.getY());
+      // // Vector2 newPoint = new Vector2(current.x + (float) sum.getX(),
+      // current.y + (float) sum.getY());
       // //
       // // transform.mul(newPoint);
       // //
@@ -207,7 +217,8 @@ public class Entity {
       // //
       // // // batch.begin();
       // // // batch.draw(texture, current.x * 20 + 200, current.y * 20 + 200);
-      // // // batch.draw(texture2, newPoint.x * 20 + 200, newPoint.y * 20 + 200);
+      // // // batch.draw(texture2, newPoint.x * 20 + 200, newPoint.y * 20 +
+      // 200);
       // // // batch.end();
       // // }
       //
@@ -229,7 +240,8 @@ public class Entity {
       // shader.begin();
       // shader.setUniformMatrix("u_projectionViewMatrix", mat);
       // texture.bind();
-      // meshes[i].render(shader, GL20.GL_TRIANGLE_FAN, 0, poly.getVertexCount());
+      // meshes[i].render(shader, GL20.GL_TRIANGLE_FAN, 0,
+      // poly.getVertexCount());
       // shader.end();
       // }
 

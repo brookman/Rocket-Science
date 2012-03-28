@@ -9,11 +9,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -28,15 +31,18 @@ public class RocketScience implements ApplicationListener {
    private float targetZoom = 20.0f;
    private float zoom = targetZoom;
 
-   private Entity rocket;
+   private Rocket rocket;
    private List<Entity> entities;
 
    private World world;
    private Camera camera;
 
-   private SpriteBatch batch;
    private Menu menu;
    private ShaderProgram shader;
+
+   private SpriteBatch spriteBatch;
+   private ParticleEffect explosion;
+   private ParticleEffect fire;
 
    @Override
    public void create() {
@@ -81,13 +87,21 @@ public class RocketScience implements ApplicationListener {
       entities.add(new Movable(gf, "base2.png", shader));
 
       entities.add(new Entity(gf, "ramp.png", shader));
-      for (int i = 1; i < 10; i++) {
-         entities.add(new Ground(gf, "ground.png", shader, 8.0f * i, -5.0f));
-         entities.add(new Ground(gf, "ground.png", shader, -8.0f * i, -5.0f));
+
+      for (int i = 1; i < 40; i++) {
+         entities.add(new Ground(gf, "ground.png", shader, 8.0f * i, -6.0f));
+         entities.add(new Ground(gf, "ground.png", shader, -8.0f * i, -6.0f));
       }
 
-      batch = new SpriteBatch();
       menu = Menu.getInstance();
+
+      spriteBatch = new SpriteBatch();
+      explosion = new ParticleEffect();
+      explosion.load(Gdx.files.internal("data/effects/explosion2"), Gdx.files.internal("data/effects"));
+
+      fire = new ParticleEffect();
+      fire.load(Gdx.files.internal("data/effects/fire"), Gdx.files.internal("data/effects"));
+      fire.start();
    }
 
    @Override
@@ -109,62 +123,87 @@ public class RocketScience implements ApplicationListener {
       camera.update();
       Gdx.graphics.setVSync(true);
 
-      Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
-      Gdx.gl.glEnable(GL20.GL_BLEND);
-      Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-      Gdx.gl.glClearColor(1f / 255f * 180f, 1f / 255f * 230f, 1f, 1);
+      Gdx.gl.glClearColor(1f / 255f * 90f, 1f / 255f * 115f, 0.5f, 1);
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
       Body b = rocket.getBody();
       Transform t = b.getTransform();
 
-      if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-         Vector2 base = new Vector2(0.0f, -3.8f);
+      if (Gdx.input.isKeyPressed(Input.Keys.UP) && b.isActive()) {
+         Vector2 base = new Vector2(0.0f, -2.8f);
          t.mul(base);
          float strength = 200.0f;
          float alpha = b.getAngle() + MathUtils.PI / 2;
          Vector2 force = new Vector2(MathUtils.cos(alpha) * strength, MathUtils.sin(alpha) * strength);
          b.applyForce(force, base);
+
+         spriteBatch.setProjectionMatrix(camera.combined.cpy().translate(base.x, base.y, 0).scl(0.04f).rotate(0, 0, 1, b.getAngle() * 180.0f / MathUtils.PI - 90.0f));
+         spriteBatch.begin();
+         fire.draw(spriteBatch, Gdx.graphics.getDeltaTime());
+         spriteBatch.end();
       }
 
-      if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-         Vector2 base = new Vector2(0.0f, -2.0f);
+      if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && b.isActive()) {
+         Vector2 base = new Vector2(-0.8f, -1.1f);
          t.mul(base);
          float strength = 50.0f;
-         float alpha = b.getAngle() + MathUtils.PI / 2 + 0.2f;
+         float alpha = b.getAngle() + MathUtils.PI / 2 - 0.6f;
          Vector2 force = new Vector2(MathUtils.cos(alpha) * strength, MathUtils.sin(alpha) * strength);
          b.applyForce(force, base);
+
+         spriteBatch.setProjectionMatrix(camera.combined.cpy().translate(base.x, base.y, 0).scl(0.02f).rotate(0, 0, 1, (b.getAngle() - 0.6f) * 180.0f / MathUtils.PI - 90.0f));
+         spriteBatch.begin();
+         fire.draw(spriteBatch, Gdx.graphics.getDeltaTime());
+         spriteBatch.end();
       }
-      if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-         Vector2 base = new Vector2(0.0f, -2.0f);
+      if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && b.isActive()) {
+         Vector2 base = new Vector2(0.8f, -1.1f);
          t.mul(base);
          float strength = 50.0f;
-         float alpha = b.getAngle() + MathUtils.PI / 2 - 0.2f;
+         float alpha = b.getAngle() + MathUtils.PI / 2 + 0.6f;
          Vector2 force = new Vector2(MathUtils.cos(alpha) * strength, MathUtils.sin(alpha) * strength);
          b.applyForce(force, base);
+
+         spriteBatch.setProjectionMatrix(camera.combined.cpy().translate(base.x, base.y, 0).scl(0.02f).rotate(0, 0, 1, (b.getAngle() + 0.6f) * 180.0f / MathUtils.PI - 90.0f));
+         spriteBatch.begin();
+         fire.draw(spriteBatch, Gdx.graphics.getDeltaTime());
+         spriteBatch.end();
       }
 
-      // Fixture head = b.getFixtureList().get(1);
-      // for (Contact contact : world.getContactList()) {
-      // if (contact.isTouching() && (contact.getFixtureA() == head || contact.getFixtureB() == head)) {
-      // System.out.println("boom");
-      // b.setActive(false);
-      // }
-      // }
+      Fixture head = rocket.head;
+      for (Contact contact : world.getContactList()) {
+         if (contact.isTouching() && (contact.getFixtureA() == head || contact.getFixtureB() == head)) {
+            b.setActive(false);
+            explosion.start();
+         }
+      }
 
-      // targetZoom = 20.0f + b.getLinearVelocity().len();
-      //
-      // zoom += (targetZoom - zoom) * 0.01f;
-      // updateCam();
-
+      Gdx.gl.glEnable(GL20.GL_BLEND);
+      Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+      Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
       for (Entity entity : entities) {
          entity.draw(camera.combined);
       }
 
-      // batch.begin();
-      // menu.draw(batch, 20, 50, Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() / 4);
-      // batch.end();
+      if (!explosion.isComplete()) {
+         spriteBatch.setProjectionMatrix(camera.combined.cpy().translate(camera.position.x, camera.position.y, 0).scl(0.04f));
+         spriteBatch.begin();
+         explosion.draw(spriteBatch, Gdx.graphics.getDeltaTime());
+         spriteBatch.end();
+      }
+
+      // if (!fire.isComplete() && thrusting) {
+      //
+      // Vector2 base = new Vector2(0.0f, -2.8f);
+      // t.mul(base);
+      //
+      // spriteBatch.setProjectionMatrix(camera.combined.cpy().translate(base.x,
+      // base.y, 0).scl(0.04f).rotate(0, 0, 1, b.getAngle() * 180.0f /
+      // MathUtils.PI - 90.0f));
+      // spriteBatch.begin();
+      // fire.draw(spriteBatch, Gdx.graphics.getDeltaTime());
+      // spriteBatch.end();
+      // }
    }
 
    @Override

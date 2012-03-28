@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase=
+"http://www.32k.eu/rocketscience" 
+    href="rocketscience-webstart.jnlp">
+    <information>
+        <title>Rocket Science</title>
+        <vendor>32k productions</vendor>
+    </information>
+	<security>
+	<all-permissions/>
+</security>
+    <resources>
+        <!-- Application Resources -->
+        <j2se version="1.6+"
+              href="http://java.sun.com/products/autodl/j2se"/>
+        <jar href="RocketScience.jar"
+            main="true" />
+
+    </resources>
+    <application-desc
+         name="Rocket Science"
+         main-class=
+           "eu32k.rocketScience.RunRocketScienceDesktop"
+         width="1280"
+         height="720">
+     </application-desc>
+     <update check="background"/>
+</jnlp>                
