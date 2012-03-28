@@ -13,7 +13,7 @@ public class Rocket extends Entity {
    }
 
    @Override
-   protected Body createBody() {
+   protected Body createBody(float x, float y) {
       return factory.loadModel(name, 0.0f, 0.0f, 8.0f, 4.0f, BodyType.DynamicBody);
    }
 }

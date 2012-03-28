@@ -132,50 +132,70 @@
             <vertex x="32.8125" y="60.9375"/>
         </polygon>
     </asset>
-    <asset relativePath="ground.png">
+    <asset relativePath="ramp.png">
+        <shape>
+            <vertex x="0.0" y="42.1875"/>
+            <vertex x="0.0" y="0.0"/>
+            <vertex x="32.8125" y="0.0"/>
+            <vertex x="32.8125" y="42.1875"/>
+        </shape>
+        <shape>
+            <vertex x="67.1875" y="42.1875"/>
+            <vertex x="100.0" y="42.1875"/>
+            <vertex x="100.0" y="0.0"/>
+            <vertex x="67.1875" y="0.0"/>
+        </shape>
         <shape>
             <vertex x="32.8125" y="12.5"/>
-            <vertex x="32.8125" y="42.1875"/>
-            <vertex x="0.0" y="42.1875"/>
-            <vertex x="0.0" y="0.0"/>
-            <vertex x="100.0" y="0.0"/>
-            <vertex x="100.0" y="42.1875"/>
-            <vertex x="67.1875" y="42.1875"/>
-            <vertex x="67.1875" y="12.5"/>
-            <vertex x="57.8125" y="12.5"/>
-            <vertex x="54.6875" y="9.375"/>
-            <vertex x="46.875" y="9.375"/>
             <vertex x="43.75" y="12.5"/>
+            <vertex x="46.875" y="9.375"/>
+            <vertex x="46.875" y="0.0"/>
+            <vertex x="32.8125" y="0.0"/>
+        </shape>
+        <shape>
+            <vertex x="57.8125" y="12.5"/>
+            <vertex x="67.1875" y="12.5"/>
+            <vertex x="67.1875" y="0.0"/>
+            <vertex x="54.6875" y="0.0"/>
+            <vertex x="54.6875" y="9.375"/>
+        </shape>
+        <shape>
+            <vertex x="46.875" y="9.375"/>
+            <vertex x="54.6875" y="9.375"/>
+            <vertex x="54.6875" y="0.0"/>
+            <vertex x="46.875" y="0.0"/>
         </shape>
         <polygon>
-            <vertex x="32.8125" y="12.5"/>
-            <vertex x="32.8125" y="42.1875"/>
             <vertex x="0.0" y="42.1875"/>
             <vertex x="0.0" y="0.0"/>
+            <vertex x="32.8125" y="0.0"/>
+            <vertex x="32.8125" y="42.1875"/>
         </polygon>
         <polygon>
-            <vertex x="46.875" y="9.375"/>
-            <vertex x="43.75" y="12.5"/>
-            <vertex x="32.8125" y="12.5"/>
-            <vertex x="0.0" y="0.0"/>
-        </polygon>
-        <polygon>
-            <vertex x="0.0" y="0.0"/>
-            <vertex x="100.0" y="0.0"/>
-            <vertex x="54.6875" y="9.375"/>
-            <vertex x="46.875" y="9.375"/>
-        </polygon>
-        <polygon>
-            <vertex x="100.0" y="0.0"/>
-            <vertex x="67.1875" y="12.5"/>
-            <vertex x="57.8125" y="12.5"/>
-            <vertex x="54.6875" y="9.375"/>
-        </polygon>
-        <polygon>
+            <vertex x="67.1875" y="0.0"/>
             <vertex x="100.0" y="0.0"/>
             <vertex x="100.0" y="42.1875"/>
             <vertex x="67.1875" y="42.1875"/>
+        </polygon>
+        <polygon>
+            <vertex x="32.8125" y="0.0"/>
+            <vertex x="46.875" y="0.0"/>
+            <vertex x="46.875" y="9.375"/>
+            <vertex x="43.75" y="12.5"/>
+            <vertex x="32.8125" y="12.5"/>
+        </polygon>
+        <polygon>
+            <vertex x="54.6875" y="9.375"/>
+            <vertex x="54.6875" y="0.0"/>
+            <vertex x="67.1875" y="0.0"/>
             <vertex x="67.1875" y="12.5"/>
+            <vertex x="57.8125" y="12.5"/>
+        </polygon>
+        <polygon>
+            <vertex x="46.875" y="0.0"/>
+            <vertex x="54.6875" y="0.0"/>
+            <vertex x="54.6875" y="9.375"/>
+            <vertex x="46.875" y="9.375"/>
         </polygon>
     </asset>
 </assets>

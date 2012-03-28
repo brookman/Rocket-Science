@@ -73,7 +73,7 @@ public class Entity {
             Vector2D sum = new Vector2D(Math.cos(angle) * 0.2, Math.sin(angle) * 0.2);
             sum.normalize();
 
-            sum = sum.times(0.1);
+            sum = sum.times(0.04);
 
             Vector2 newPoint = new Vector2(vector.x + (float) sum.getX(), vector.y + (float) sum.getY());
 
@@ -86,8 +86,8 @@ public class Entity {
             meshesData[dataIndex + 1] = vector.y;
             meshesData[dataIndex + 2] = 0;
             meshesData[dataIndex + 3] = Color.toFloatBits(128, 128, 128, 255);
-            meshesData[dataIndex + 4] = newPoint.x / 8.0f + 0.5f;
-            meshesData[dataIndex + 5] = 1.0f - (newPoint.y / 8.0f + 0.5f);
+            meshesData[dataIndex + 4] = vertices[i].x / 8.0f + 0.5f;
+            meshesData[dataIndex + 5] = 1.0f - (vertices[i].y / 8.0f + 0.5f);
          }
          mesh.setVertices(meshesData);
       }
@@ -103,10 +103,14 @@ public class Entity {
    private FixtureData[] fixtureData;
 
    public Entity(GeometryFactory factory, String name, ShaderProgram shader) {
+      this(factory, name, shader, 0.0f, 0.0f);
+   }
+
+   public Entity(GeometryFactory factory, String name, ShaderProgram shader, float x, float y) {
       this.factory = factory;
       this.name = name;
       this.shader = shader;
-      body = createBody();
+      body = createBody(x, y);
       texture = Textures.tex("models/" + name);
 
       List<Fixture> fixtureList = body.getFixtureList();
@@ -117,8 +121,8 @@ public class Entity {
 
    }
 
-   protected Body createBody() {
-      return factory.loadModel(name, 0.0f, 0.0f, 8.0f, 0.0f, BodyType.StaticBody);
+   protected Body createBody(float x, float y) {
+      return factory.loadModel(name, x, y, 8.0f, 0.0f, BodyType.StaticBody);
    }
 
    public void draw(Matrix4 mat) {

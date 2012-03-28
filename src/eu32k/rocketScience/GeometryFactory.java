@@ -31,6 +31,7 @@ public class GeometryFactory {
 
       FixtureDef fixture = makeFixture(null, 1.0f, 0.4f, 0.1f, false);
       fixtureAtlas.createFixtures(body, name, size, size, fixture);
+      body.setTransform(new Vector2(x, y), 0.0f);
       return body;
    }
 

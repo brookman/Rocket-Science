@@ -6,14 +6,15 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import eu32k.rocketScience.GeometryFactory;
 
-public class Movable extends Entity {
+public class Ground extends Entity {
 
-   public Movable(GeometryFactory factory, String name, ShaderProgram shader) {
-      super(factory, name, shader);
+   public Ground(GeometryFactory factory, String name, ShaderProgram shader, float x, float y) {
+      super(factory, name, shader, x, y);
+
    }
 
    @Override
    protected Body createBody(float x, float y) {
-      return factory.loadModel(name, 0.0f, 0.0f, 8.0f, 0.5f, BodyType.DynamicBody);
+      return factory.loadModel(name, x, y, 8.0f, 0.5f, BodyType.StaticBody);
    }
 }

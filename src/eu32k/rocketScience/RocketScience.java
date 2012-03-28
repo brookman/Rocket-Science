@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.box2d.World;
 
 import eu32k.rocketScience.entity.Entity;
+import eu32k.rocketScience.entity.Ground;
 import eu32k.rocketScience.entity.Movable;
 import eu32k.rocketScience.entity.Rocket;
 
@@ -79,11 +80,14 @@ public class RocketScience implements ApplicationListener {
       entities.add(new Movable(gf, "base1.png", shader));
       entities.add(new Movable(gf, "base2.png", shader));
 
-      entities.add(new Entity(gf, "ground.png", shader));
+      entities.add(new Entity(gf, "ramp.png", shader));
+      for (int i = 1; i < 10; i++) {
+         entities.add(new Ground(gf, "ground.png", shader, 8.0f * i, -5.0f));
+         entities.add(new Ground(gf, "ground.png", shader, -8.0f * i, -5.0f));
+      }
 
       batch = new SpriteBatch();
       menu = Menu.getInstance();
-
    }
 
    @Override
@@ -114,17 +118,29 @@ public class RocketScience implements ApplicationListener {
 
       Body b = rocket.getBody();
       Transform t = b.getTransform();
-      Vector2 base = new Vector2(0.0f, 0.0f);
-      t.mul(base);
+
       if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+         Vector2 base = new Vector2(0.0f, -3.8f);
+         t.mul(base);
          float strength = 200.0f;
          float alpha = b.getAngle() + MathUtils.PI / 2;
-         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            alpha += 0.2;
-         }
-         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            alpha -= 0.2;
-         }
+         Vector2 force = new Vector2(MathUtils.cos(alpha) * strength, MathUtils.sin(alpha) * strength);
+         b.applyForce(force, base);
+      }
+
+      if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+         Vector2 base = new Vector2(0.0f, -2.0f);
+         t.mul(base);
+         float strength = 50.0f;
+         float alpha = b.getAngle() + MathUtils.PI / 2 + 0.2f;
+         Vector2 force = new Vector2(MathUtils.cos(alpha) * strength, MathUtils.sin(alpha) * strength);
+         b.applyForce(force, base);
+      }
+      if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+         Vector2 base = new Vector2(0.0f, -2.0f);
+         t.mul(base);
+         float strength = 50.0f;
+         float alpha = b.getAngle() + MathUtils.PI / 2 - 0.2f;
          Vector2 force = new Vector2(MathUtils.cos(alpha) * strength, MathUtils.sin(alpha) * strength);
          b.applyForce(force, base);
       }
