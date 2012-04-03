@@ -29,9 +29,13 @@ public class GeometryFactory {
       body.setLinearDamping(0.2f);
       body.setAngularDamping(0.5f);
 
-      FixtureDef fixture = makeFixture(null, 1.0f, 0.4f, 0.1f, false);
+      FixtureDef fixture = makeFixture(null, 1.0f, 0.8f, 0.1f, false);
       fixtureAtlas.createFixtures(body, name, size, size, fixture);
       body.setTransform(new Vector2(x, y), 0.0f);
+
+      MassData massData = body.getMassData();
+      massData.mass = mass;
+      body.setMassData(massData);
       return body;
    }
 

@@ -17,7 +17,7 @@ public class Rocket extends Entity {
 
    @Override
    protected Body createBody(float x, float y) {
-      Body body = factory.loadModel(name, 0.0f, 0.0f, 8.0f, 4.0f, BodyType.DynamicBody);
+      Body body = factory.loadModel(name, 0.0f, 0.0f, 8.0f, 6.0f, BodyType.DynamicBody);
       head = body.getFixtureList().get(3);
       head.setSensor(true);
       return body;

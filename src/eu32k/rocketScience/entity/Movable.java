@@ -12,8 +12,12 @@ public class Movable extends Entity {
       super(factory, name, shader);
    }
 
+   public Movable(GeometryFactory factory, String name, ShaderProgram shader, float x, float y) {
+      super(factory, name, shader, x, y);
+   }
+
    @Override
    protected Body createBody(float x, float y) {
-      return factory.loadModel(name, 0.0f, 0.0f, 8.0f, 0.5f, BodyType.DynamicBody);
+      return factory.loadModel(name, x, y, 8.0f, 0.5f, BodyType.DynamicBody);
    }
 }

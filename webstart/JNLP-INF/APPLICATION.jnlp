@@ -6,9 +6,10 @@
         <title>Rocket Science</title>
         <vendor>32k productions</vendor>
     </information>
+	<update check="always" policy="always"/>
 	<security>
-	<all-permissions/>
-</security>
+		<all-permissions/>
+	</security>
     <resources>
         <!-- Application Resources -->
         <j2se version="1.6+"
